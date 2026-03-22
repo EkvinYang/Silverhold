@@ -1,0 +1,114 @@
+import pygame
+import random
+import math
+import sys
+pygame.init()
+
+WIDTH = 1280
+HEIGHT = 720
+SIZE = (WIDTH, HEIGHT)
+
+
+# ---------------------------
+# Initialize global variables
+# ---------------------------
+white =(255,255,255)
+button_color = (204, 106, 106)
+# 1 = home, 2=settings, 3=help, 4= clicked play game settings, 5 = inside  game
+Current_Game_State = 1
+smallfont = pygame.font.SysFont('Corbel',35) 
+text = smallfont.render('quit' , True , white)
+play_button = pygame.Rect(370, 200, 500, 200)
+settings_button = pygame.Rect(470, 450, 300, 100)
+quit_button = pygame.Rect(20, 20, 100, 100)
+help_button = pygame.Rect(1160, 560, 100, 100)
+screen = pygame.display.set_mode(SIZE)
+clock = pygame.time.Clock()
+mouse_x = 0
+mouse_y = 0
+
+def clicked_quit(mouse_x, mouse_y) -> bool:
+    if (20 < mouse_x and mouse_x < 120 and 20 < mouse_y and mouse_y < 120):
+        return True
+    return False
+def clicked_help(mouse_x, mouse_y) -> bool:
+    if (1160 < mouse_x and mouse_x < 1160+100 and 560 < mouse_y and mouse_y < 560+100):
+        return True
+    return False
+def clicked_play(mouse_x, mouse_y) -> bool:
+    if (370 < mouse_x and mouse_x < 370+500 and 200 < mouse_y and mouse_y < 200+200):
+        return True
+    return False
+def clicked_settings(mouse_x, mouse_y) -> bool:
+    if (470 < mouse_x and mouse_x < 470+300 and 450 < mouse_y and mouse_y < 450+100):
+        return True
+    return False
+running = True
+while running:
+    # EVENT HANDLING
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouse = pygame.mouse.get_pos()
+            mouse_x = mouse[0]
+            mouse_y = mouse[1]
+            if clicked_quit(mouse_x, mouse_y) == True:
+                running = False
+            elif clicked_settings(mouse_x, mouse_y) == True:
+                Current_Game_State = 2
+            elif clicked_help(mouse_x, mouse_y) == True:
+                Current_Game_State = 3
+            elif clicked_play(mouse_x, mouse_y) == True:
+                Current_Game_State = 4
+    
+           
+    # GAME STATE UPDATES
+    if (Current_Game_State == 1):
+        # home screen
+        screen.fill(white)  # always the first drawing command
+        pygame.draw.rect(screen, button_color, play_button, width = 0)
+        pygame.draw.rect(screen, button_color, settings_button, width = 0)
+        pygame.draw.rect(screen, button_color, help_button, width = 0)
+        pygame.draw.rect(screen, button_color, quit_button, width = 0)
+    elif (Current_Game_State == 2):
+        # settings
+        print("clicked into setitngs")
+    elif (Current_Game_State == 3):
+        # help
+        print("clicked into help")
+    elif (Current_Game_State == 4):
+        # selecting game settings
+        print("selecting game settings")
+    elif (Current_Game_State == 5):
+        # actual gameplay mechanics
+        print("the game")
+    # All game math and comparisons happen here
+    mouse = pygame.mouse.get_pos()
+    # DRAWING
+    if (Current_Game_State == 1):
+        # home screen
+        screen.fill(white)  # always the first drawing command
+        pygame.draw.rect(screen, button_color, play_button, width = 0)
+        pygame.draw.rect(screen, button_color, settings_button, width = 0)
+        pygame.draw.rect(screen, button_color, help_button, width = 0)
+        pygame.draw.rect(screen, button_color, quit_button, width = 0)
+    elif (Current_Game_State == 2):
+        # settings
+        print("clicked into setitngs")
+    elif (Current_Game_State == 3):
+        # help
+        print("clicked into help")
+    elif (Current_Game_State == 4):
+        # selecting game settings
+        print("selecting game settings")
+    elif (Current_Game_State == 5):
+        # actual gameplay mechanics
+        print("the game")
+    # Must be the last two lines
+    # of the game loop
+    pygame.display.flip()
+    clock.tick(30)
+    #---------------------------
+
+pygame.quit()

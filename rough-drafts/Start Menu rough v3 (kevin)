@@ -1,0 +1,182 @@
+import pygame
+import random
+import math
+import sys
+pygame.init()
+
+WIDTH = 1280
+HEIGHT = 720
+SIZE = (WIDTH, HEIGHT)
+
+class Button:
+    def __init__(self, x, y, width, height, color, text, text_color):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.color = color
+        self.text = text
+        self.text_color = text_color
+
+# ---------------------------
+# Initialize global variables
+# ---------------------------
+white = (255,255,255)
+black = (0, 0, 0)
+button_color = (204, 106, 106)
+red = (255, 0, 0)
+green = (0, 255, 0)
+blue = (0, 0, 255)
+
+# 1 = home, 2 = settings, 3 = help,  4 = gameplay
+Current_Game_State = 1
+# 1 = easy, 2 = medium, 3 = hard     difficulty number is enemy stat amplifier. 100%, 150%, 200%  for example
+Game_Difficulty = 1
+# 1 = survival, 2 = hardcore    hardcore is 1 health towers, survival is 100 health
+Game_Mode = 1
+
+
+smallfont = pygame.font.SysFont('Corbel',35) 
+display_surface = pygame.display.set_mode((100, 100))
+
+# gamestate 1
+play_button = Button(370, 200, 500, 200, button_color, "Play", green)
+settings_button = Button(470, 450, 300, 100, button_color, "Settings", green)
+quit_button = Button(20, 20, 100, 100, button_color, "Quit", green)
+help_button = Button(1160, 600, 100, 100, button_color, "Help", green)
+
+#gamestate 2
+difficulty_easy = Button(170, 100, 200, 200, green, "Easy", black)
+difficulty_medium = Button(540, 100, 200, 200, red, "Medium", black)
+difficulty_hard = Button(910, 100, 200, 200, red, "Hard", black)
+gamemode_survival = Button(300, 350, 200, 200, green, "Survival", black)
+gamemode_hardcore = Button(780, 350, 200, 200, red, "Hardcore", black)
+
+#gamestate 3
+#gamestate 4
+#shop
+Shop_Open = False
+open_shop_button = Button(1180, 200, 75, 75, green, "shop", black)
+close_shop_button = Button(1100, 200, 60, 60, red, "X", black)
+
+
+# play_button = pygame.Rect(370, 200, 500, 200)
+# play_display_surface = pygame.display.set_mode((100, 100))
+# play_text = smallfont.render('PLAY', True, (0,255,0))
+# play_textRect = play_text.get_rect()
+# play_textRect.center = (620, 300)
+
+def draw_Button(button):
+    pygame.draw.rect(screen, button.color, (button.x, button.y, button.width, button.height), width = 0)
+    button_text = smallfont.render(button.text, True, button.text_color)
+    button_textRect = button_text.get_rect()
+    button_textRect.center = (button.x + button.width/2, button.y + button.height/2)
+    display_surface.blit(button_text, button_textRect)
+   
+def clicked_Button(button, mouse_x, mouse_y) -> bool:
+    return (button.x < mouse_x and mouse_x < button.x+button.width and button.y < mouse_y and mouse_y < button.y+button.height)
+screen = pygame.display.set_mode(SIZE)
+clock = pygame.time.Clock()
+mouse_x = 0
+mouse_y = 0
+
+running = True
+while running:
+    # EVENT HANDLING
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouse = pygame.mouse.get_pos()
+            mouse_x = mouse[0]
+            mouse_y = mouse[1]
+            if Current_Game_State == 1:
+                if clicked_Button(quit_button, mouse_x, mouse_y):
+                    running = False
+                elif clicked_Button(settings_button, mouse_x, mouse_y):
+                    Current_Game_State = 2
+                elif clicked_Button(help_button, mouse_x, mouse_y):
+                    Current_Game_State = 3
+                elif clicked_Button(play_button, mouse_x, mouse_y):
+                    Current_Game_State = 4
+            elif Current_Game_State == 2:
+                if clicked_Button(quit_button, mouse_x, mouse_y):
+                    Current_Game_State = 1
+                elif (clicked_Button(difficulty_easy, mouse_x, mouse_y)):
+                    if (Game_Difficulty != 1):
+                        Game_Difficulty = 1
+                        difficulty_easy.color = green
+                        difficulty_medium.color = red
+                        difficulty_hard.color = red
+                elif (clicked_Button(difficulty_medium, mouse_x, mouse_y)):
+                    if (Game_Difficulty != 2):
+                        Game_Difficulty = 2
+                        difficulty_easy.color = red
+                        difficulty_medium.color = green
+                        difficulty_hard.color = red
+                elif (clicked_Button(difficulty_hard, mouse_x, mouse_y)):
+                    if (Game_Difficulty != 3):
+                        Game_Difficulty = 3
+                        difficulty_easy.color = red
+                        difficulty_medium.color = red
+                        difficulty_hard.color = green
+                elif (clicked_Button(gamemode_survival, mouse_x, mouse_y)):
+                    if (Game_Mode != 1):
+                        Game_Mode = 1
+                        gamemode_survival.color = green
+                        gamemode_hardcore.color = red
+                elif (clicked_Button(gamemode_hardcore, mouse_x, mouse_y)):
+                    if (Game_Mode != 2):
+                        Game_Mode = 2
+                        gamemode_survival.color = red
+                        gamemode_hardcore.color = green
+            elif Current_Game_State == 3:
+                if clicked_Button(quit_button, mouse_x, mouse_y):
+                    Current_Game_State = 1
+            elif Current_Game_State == 4:
+                if clicked_Button(quit_button, mouse_x, mouse_y):
+                    Current_Game_State = 1
+                elif (clicked_Button(open_shop_button, mouse_x, mouse_y)):
+                    Shop_Open = True
+                elif (clicked_Button(close_shop_button, mouse_x, mouse_y)):
+                    Shop_Open = False
+    # GAME STATE UPDATES
+    if (Current_Game_State == 4):
+        # actual gameplay mechanics
+        print("the game")
+    # All game math and comparisons happen here
+    mouse = pygame.mouse.get_pos()
+    # DRAWING
+    screen.fill(white)  # always the first drawing command
+    if (Current_Game_State == 1):
+        # home screen
+        draw_Button(play_button)
+        draw_Button(settings_button,)
+        draw_Button(help_button)
+        draw_Button(quit_button)
+    elif (Current_Game_State == 2):
+        # settings
+        draw_Button(quit_button)
+        draw_Button(difficulty_easy)
+        draw_Button(difficulty_medium)
+        draw_Button(difficulty_hard)
+        draw_Button(gamemode_survival)
+        draw_Button(gamemode_hardcore)
+    elif (Current_Game_State == 3):
+        # help
+        draw_Button(quit_button)
+    elif (Current_Game_State == 4):
+        # inside game
+        draw_Button(open_shop_button)
+        if (Shop_Open):
+            draw_Button(close_shop_button)
+
+        draw_Button(quit_button)
+    print(Current_Game_State)
+    # Must be the last two lines
+    # of the game loop
+    pygame.display.flip()
+    clock.tick(30)
+    #---------------------------
+
+pygame.quit()
